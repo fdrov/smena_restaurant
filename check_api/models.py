@@ -35,7 +35,7 @@ class Printer(models.Model):
         verbose_name_plural = 'Принтеры'
 
     def __str__(self):
-        return self.name, self.check_type, self.point_id
+        return f'{self.name}, {self.check_type}, {self.point_id=}'
 
 
 class Check(models.Model):
@@ -74,4 +74,4 @@ class Check(models.Model):
         verbose_name_plural = 'Чеки'
 
     def __str__(self):
-        return self.printer_id, self.status
+        return f'{self.pk}, {self.status=}'
