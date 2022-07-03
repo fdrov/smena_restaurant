@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_rq',
 ]
 
 MIDDLEWARE = [
@@ -89,6 +90,21 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '5400',
     }
+}
+
+WKHTMLTOPDF = {
+    'HOST': 'localhost',
+    'PORT': 49153,
+}
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+        'DEFAULT_TIMEOUT': 360,
+    },
 }
 
 

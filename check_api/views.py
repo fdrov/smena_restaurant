@@ -1,12 +1,14 @@
 import json
 
+import django_rq
+
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 
-
 from .models import Printer, Check
+from .tasks import process_pdf
 
 
 @csrf_exempt
@@ -28,6 +30,8 @@ def create_checks(request):
                         order=order,
                     )
                 if created:
+                    # process_pdf(obj)
+                    django_rq.enqueue(process_pdf, obj)
                     pass  # TODO добавить в очередь
                 check_created.append(created)
             if not any(check_created):
@@ -44,7 +48,7 @@ def create_checks(request):
         status=405,
     )
 
-@csrf_exempt
+
 def get_new_checks(request, api_key):
     if request.method == 'GET':
         try:
@@ -74,53 +78,33 @@ def get_new_checks(request, api_key):
         status=405,
     )
 
-def create_pdf(check):
-    import json
-    import requests
-    import base64
-
-    url = 'http://localhost:49153/'
-    data = {
-        'contents': base64.b64encode(bytes(check, 'utf8')).decode('utf-8'),
-    }
-    headers = {
-        'Content-Type': 'application/json',  # This is important
-    }
-    response = requests.post(url, data=json.dumps(data), headers=headers)
-
-    # Save the response contents to a file
-    with open('file.pdf', 'wb') as f:
-        f.write(response.content)
-
 
 def get_pdf(request, api_key, check_id):
-    from django.template.loader import render_to_string
-    from django.template import Context, Template
-
-    # if request.method == 'GET':
-        # if api_key == 'api_key_1' and check_id == 1:
-        #     return FileResponse(open('test_pic.png', 'rb'))
-    try:
-        printer = Printer.objects.get(api_key=api_key)
-    except Printer.DoesNotExist:
-        return JsonResponse(
-            {'error': 'Ошибка авторизации'},
-            status=401,
-        )
-    try:
-        check = printer.checks.get(id=check_id)
-    except Check.DoesNotExist:
-        return JsonResponse(
-            {'error': 'Данного чека не существует'},
-            status=400,
-        )
-    templates = {
-        'KN': 'kitchen_check.html',
-        'CL': 'client_check.html',
-    }
-    context = check.order
-    # page = render(request, templates[check.check_type], context)
-    # create_pdf(page.content)
-    rendered_check = render_to_string(templates[check.check_type], context)
-    create_pdf(rendered_check)
-    return HttpResponse('kek')
+    if request.method == 'GET':
+        try:
+            printer = Printer.objects.get(api_key=api_key)
+        except Printer.DoesNotExist:
+            return JsonResponse(
+                {'error': 'Ошибка авторизации'},
+                status=401,
+            )
+        print(printer)
+        try:
+            check = printer.checks.get(id=check_id)
+        except Check.DoesNotExist:
+            return JsonResponse(
+                {'error': 'Данного чека не существует'},
+                status=400,
+            )
+        if not check.pdf_file:
+            return JsonResponse(
+                {'error': 'Для данного чека не сгенерирован PDF-файл'},
+                status=400,
+            )
+        check.status = 'PR'
+        check.save()
+        return FileResponse(open(check.pdf_file.path, 'rb'))
+    return JsonResponse(
+        {'error': 'Method Not Allowed'},
+        status=405,
+    )

@@ -71,7 +71,7 @@ class Check(models.Model):
     )
     pdf_file = models.FileField(
         'созданный PDF-файл',
-        upload_to='media/pdf/',
+        upload_to='pdf/',
         blank=True,
         null=True,
     )
