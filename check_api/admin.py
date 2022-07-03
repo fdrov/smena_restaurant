@@ -5,9 +5,10 @@ from .models import Printer, Check
 
 @admin.register(Printer)
 class PrinterAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'check_type', 'point_id']
 
 
 @admin.register(Check)
 class CheckAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['pk', 'status', 'printer_id', 'check_type']
+
