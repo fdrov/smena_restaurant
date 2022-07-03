@@ -51,6 +51,7 @@ class Check(models.Model):
     printer_id = models.ForeignKey(
         Printer,
         on_delete=models.PROTECT,
+        related_name='checks',
     )
     check_type = models.CharField(
         'тип чека',
@@ -67,6 +68,12 @@ class Check(models.Model):
         max_length=2,
         choices=STATUS_CHOICES,
         default=NEW,
+    )
+    pdf_file = models.FileField(
+        'созданный PDF-файл',
+        upload_to='media/pdf/',
+        blank=True,
+        null=True,
     )
 
     class Meta:
