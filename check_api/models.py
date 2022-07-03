@@ -53,7 +53,7 @@ class Check(models.Model):
         on_delete=models.PROTECT,
         related_name='checks',
     )
-    check_type = models.CharField(
+    type = models.CharField(
         'тип чека',
         max_length=2,
         choices=CHECK_TYPE_CHOICES,

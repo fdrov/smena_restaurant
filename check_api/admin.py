@@ -10,5 +10,5 @@ class PrinterAdmin(admin.ModelAdmin):
 
 @admin.register(Check)
 class CheckAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'status', 'printer_id', 'check_type']
+    list_display = ['pk', 'status', 'printer_id', 'type']
 
