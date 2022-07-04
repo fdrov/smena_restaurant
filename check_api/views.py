@@ -24,14 +24,15 @@ def create_checks(request):
                 )
             check_created = []
             for point_printer in point_printers:
-                obj, created = Check.objects.get_or_create(
+                check, created = Check.objects.get_or_create(
                         printer_id=point_printer,
                         type=point_printer.check_type,
                         order=order,
                     )
-                if created:
+                # if created:
+                # if not check.pdf_file:
                     # process_pdf(obj)
-                    django_rq.enqueue(process_pdf, obj)
+                django_rq.enqueue(process_pdf, check)
                 check_created.append(created)
             if not any(check_created):
                 return JsonResponse(
