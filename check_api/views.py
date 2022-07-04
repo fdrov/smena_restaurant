@@ -48,8 +48,10 @@ def create_checks(request):
     )
 
 
-def get_new_checks(request, api_key):
+def get_new_checks(request, api_key=None):
     if request.method == 'GET':
+        if not api_key:
+            api_key = request.GET.get('api_key', '')
         try:
             printer = Printer.objects.get(api_key=api_key)
         except Printer.DoesNotExist:
@@ -57,11 +59,11 @@ def get_new_checks(request, api_key):
                 {'error': 'Ошибка авторизации'},
                 status=401,
             )
-        checks = printer.checks.filter(status='RE').values('id')
+        checks = printer.checks.filter(status=Check.RENDERED).values('id')
 
         checks_ids = list(checks)
-        print(checks_ids)
-        print(len(connection.queries))
+        # print(checks_ids)
+        # print(len(connection.queries))
         if checks_ids:
             return JsonResponse(
 
@@ -78,8 +80,11 @@ def get_new_checks(request, api_key):
     )
 
 
-def get_pdf(request, api_key, check_id):
+def get_pdf(request, api_key=None, check_id=None):
     if request.method == 'GET':
+        if not api_key and not check_id:
+            api_key = request.GET.get('api_key', '')
+            check_id = request.GET.get('check_id', '')
         try:
             printer = Printer.objects.get(api_key=api_key)
         except Printer.DoesNotExist:
@@ -87,7 +92,7 @@ def get_pdf(request, api_key, check_id):
                 {'error': 'Ошибка авторизации'},
                 status=401,
             )
-        print(printer)
+        # print(printer)
         try:
             check = printer.checks.get(id=check_id)
         except Check.DoesNotExist:
@@ -100,7 +105,7 @@ def get_pdf(request, api_key, check_id):
                 {'error': 'Для данного чека не сгенерирован PDF-файл'},
                 status=400,
             )
-        check.status = 'PR'
+        check.status = Check.PRINTED
         check.save()
         return FileResponse(open(check.pdf_file.path, 'rb'))
     return JsonResponse(
