@@ -50,7 +50,7 @@ class Check(models.Model):
 
     printer_id = models.ForeignKey(
         Printer,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='checks',
     )
     type = models.CharField(
