@@ -1,0 +1,42 @@
+[
+{
+  "model": "check_api.printer",
+  "pk": 1,
+  "fields": {
+    "name": "Printer1",
+    "api_key": "api_key_1",
+    "check_type": "KN",
+    "point_id": 1
+  }
+},
+{
+  "model": "check_api.printer",
+  "pk": 2,
+  "fields": {
+    "name": "Printer2",
+    "api_key": "api_key_2",
+    "check_type": "CL",
+    "point_id": 1
+  }
+},
+{
+  "model": "check_api.printer",
+  "pk": 3,
+  "fields": {
+    "name": "Printer3",
+    "api_key": "api_key_3",
+    "check_type": "KN",
+    "point_id": 1000
+  }
+},
+{
+  "model": "check_api.printer",
+  "pk": 4,
+  "fields": {
+    "name": "Printer4",
+    "api_key": "api_key_4",
+    "check_type": "CL",
+    "point_id": 1000
+  }
+}
+]
