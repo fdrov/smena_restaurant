@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  postgres_96:
+    image: postgres:9.6.23-alpine3.14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5400:5432
+    environment:
+      POSTGRES_PASSWORD: 123456789
+      POSTGRES_USER: postgres
+      POSTGRES_DB: smena
+    restart: always
+
+  redis:
+    image: redis:7.0.2-alpine
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass "super_password"
+    restart: always
+
+  wkhtmltopdf:
+    image: openlabs/docker-wkhtmltopdf-aas
+    ports:
+      - 49153:80
+    restart: always
+
+volumes:
+  postgres_data:

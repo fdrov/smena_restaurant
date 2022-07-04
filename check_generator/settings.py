@@ -102,7 +102,7 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
-        'PASSWORD': '',
+        'PASSWORD': 'super_password',
         'DEFAULT_TIMEOUT': 360,
     },
 }
