@@ -31,7 +31,7 @@ def create_checks(request):
                     )
                 # if created:
                 # if not check.pdf_file:
-                    # process_pdf(obj)
+                # process_pdf(check)
                 django_rq.enqueue(process_pdf, check)
                 check_created.append(created)
             if not any(check_created):
