@@ -13,15 +13,7 @@ from check_api.models import Check
 WKHTMLTOPDF = settings.WKHTMLTOPDF
 
 
-# def render_html(template, order):
-#     templates = {
-#         'KN': 'kitchen_check.html',
-#         'CL': 'client_check.html',
-#     }
-#     return render_to_string(templates, order)
-
-
-def generate_pdf_file(check, filename):
+def generate_pdf_file(check):
     url = f'http://{WKHTMLTOPDF["HOST"]}:{WKHTMLTOPDF["PORT"]}'
     data = {
         'contents': base64.b64encode(bytes(check, 'utf8')).decode('utf-8'),
@@ -32,8 +24,12 @@ def generate_pdf_file(check, filename):
     response = requests.post(url, data=json.dumps(data), headers=headers)
 
     return response.content
-    # with open(filename, 'wb') as f:
-    #     f.write(response.content)
+
+
+def mark_as_rendered(obj):
+    obj.status = Check.RENDERED
+    obj.save()
+    return
 
 
 def process_pdf(check):
@@ -50,14 +46,12 @@ def process_pdf(check):
     path = Path(settings.MEDIA_ROOT / 'pdf' / file_name)
     if path.is_file():
         check.pdf_file = str(Path('pdf') / file_name)
-        check.status = Check.RENDERED
-        check.save()
+        mark_as_rendered(check)
         return
 
     rendered_check = render_to_string(templates[check.type], context=check.order)
-    pdf_check = generate_pdf_file(rendered_check, file_name)
+    pdf_check = generate_pdf_file(rendered_check)
 
     check.pdf_file.save(file_name, ContentFile(pdf_check), save=False)
-    check.status = Check.RENDERED
-    check.save()
+    mark_as_rendered(check)
     return
