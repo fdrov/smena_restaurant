@@ -86,24 +86,24 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'smena',
-        'USER': 'postgres',
-        'PASSWORD': '123456789',
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
         'HOST': '127.0.0.1',
-        'PORT': '5400',
+        'PORT': env.int('POSTRGES_PORT'),
     }
 }
 
 WKHTMLTOPDF = {
     'HOST': 'localhost',
-    'PORT': 49153,
+    'PORT': env.int('WKHTMLTOPDF_PORT'),
 }
 
 RQ_QUEUES = {
     'default': {
         'HOST': 'localhost',
-        'PORT': 6379,
+        'PORT': env.int('REDIS_PORT'),
         'DB': 0,
-        'PASSWORD': 'super_password',
+        'PASSWORD': env('REDIS_PASSWORD'),
         'DEFAULT_TIMEOUT': 360,
     },
 }
