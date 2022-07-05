@@ -52,6 +52,7 @@ class Check(models.Model):
         Printer,
         on_delete=models.CASCADE,
         related_name='checks',
+        verbose_name='принтер'
     )
     type = models.CharField(
         'тип чека',
