@@ -49,14 +49,15 @@ def process_pdf(check):
     file_name = f'{check.order["id"]}_{check_type_names[check.type]}.pdf'
     path = Path(settings.MEDIA_ROOT / 'pdf' / file_name)
     if path.is_file():
+        check.pdf_file = str(Path('pdf') / file_name)
         check.status = Check.RENDERED
         check.save()
-        return None
+        return
 
     rendered_check = render_to_string(templates[check.type], context=check.order)
-    file = ContentFile(generate_pdf_file(rendered_check, file_name))
+    pdf_check = generate_pdf_file(rendered_check, file_name)
 
-    check.pdf_file.save(file_name, file, save=False)
+    check.pdf_file.save(file_name, ContentFile(pdf_check), save=False)
     check.status = Check.RENDERED
     check.save()
-    return None
+    return
