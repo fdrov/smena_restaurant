@@ -15,8 +15,13 @@ WKHTMLTOPDF = settings.WKHTMLTOPDF
 
 def generate_pdf_file(check):
     url = f'http://{WKHTMLTOPDF["HOST"]}:{WKHTMLTOPDF["PORT"]}'
+
+    binary_file_data = bytes(check, encoding='utf8')
+    base64_encoded_data = base64.b64encode(binary_file_data)
+    base64_message = base64_encoded_data.decode('utf-8')
+
     data = {
-        'contents': base64.b64encode(bytes(check, 'utf8')).decode('utf-8'),
+        'contents': base64_message,
     }
     headers = {
         'Content-Type': 'application/json',
