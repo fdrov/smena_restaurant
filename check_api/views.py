@@ -1,7 +1,6 @@
 import django_rq
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.exceptions import NotAuthenticated
 from rest_framework.serializers import ValidationError
 from rest_framework import status
 
@@ -45,7 +44,7 @@ def create_checks(request):
 @api_view(['GET'])
 def get_new_checks(request, api_key=None):
     if not api_key:
-        kwargs_serializer = ApiKeySerializer(data=request.GET)
+        kwargs_serializer = ApiKeySerializer(data=request.query_params)
         kwargs_serializer.is_valid(raise_exception=True)
         api_key = kwargs_serializer.validated_data.get('api_key')
     try:
@@ -69,7 +68,7 @@ def get_new_checks(request, api_key=None):
 @api_view(['GET'])
 def get_pdf(request, api_key=None, check_id=None):
     if not api_key and not check_id:
-        kwargs_serializer = GetPdfSerializer(data=request.GET)
+        kwargs_serializer = GetPdfSerializer(data=request.query_params)
         kwargs_serializer.is_valid(raise_exception=True)
         api_key = kwargs_serializer.validated_data.get('api_key')
         check_id = kwargs_serializer.validated_data.get('check_id')
