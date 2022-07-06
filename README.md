@@ -53,6 +53,10 @@ python manage.py rqworker default
 ```bash
 python manage.py runserver
 ```
+### Авторизация
+В приложении добавлена базовая авторизация. **По-умолчанию только аутентифицированным пользователям доступны все api-методы.**
+
+Поменять политику доступа можно в файле `check_generator/settings.py` настраивая `DEFAULT_PERMISSION_CLASSES`.
 
 ### Схема работы сервиса
 
