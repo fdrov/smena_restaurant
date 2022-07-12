@@ -1,7 +1,6 @@
 import django_rq
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 from rest_framework import status
 
 from django.http import FileResponse
@@ -20,8 +19,9 @@ def create_checks(request):
     point_id = order.get('point_id')
     point_printers = Printer.objects.filter(point_id=point_id)
     if not point_printers:
-        raise ValidationError(
-            {'error': 'Для данной точки не настроено ни одного принтера'}
+        return Response(
+            {'error': 'Для данной точки не настроено ни одного принтера'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
     check_created = []
     for point_printer in point_printers:
@@ -33,8 +33,9 @@ def create_checks(request):
         django_rq.enqueue(process_pdf, check)
         check_created.append(created)
     if not any(check_created):
-        raise ValidationError(
-            {'error': 'Для данного заказа уже созданы чеки'}
+        return Response(
+            {'error': 'Для данного заказа уже созданы чеки'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
     return Response(
         {'ok': 'Чеки успешно созданы'}
