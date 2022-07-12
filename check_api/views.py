@@ -30,7 +30,8 @@ def create_checks(request):
                 type=point_printer.check_type,
                 order=order,
             )
-        django_rq.enqueue(process_pdf, check)
+        if created:
+            django_rq.enqueue(process_pdf, check)
         check_created.append(created)
     if not any(check_created):
         return Response(
